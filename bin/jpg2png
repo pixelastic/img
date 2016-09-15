@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+require_relative '../lib/image_helper'
+
+class Jpg2Png
+  include ImageHelper
+  def initialize(*inputs)
+    @usage = 'jpg2png ./input.jpg [./input2.jpg]'
+    @documentation = 'Takes JPG files as input and create PNG equivalents'
+
+    @inputs = validate_inputs(inputs, 'jpg')
+  end
+
+  def run
+# #!/usr/bin/env zsh
+# if [[ $1 == '-h' ]]; then
+#   echo "Usage:"
+#   echo "jpg2png ./input.jpg"
+#   echo ""
+#   echo "Takes a jpg as input and outputs the same file as png"
+#   exit 1
+# fi
+# 
+# # Convert a jpg file to a png file
+# for file in $@; do
+#   convert ${file:a} ${file:a:r}.png
+# done
+# 
+# 
+# 
+#   end
+# end
+Jpg2Png.new(*ARGS).run

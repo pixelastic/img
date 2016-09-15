@@ -15,7 +15,6 @@ module ImageHelper
     inputs = inputs.reject do |input|
       next true unless File.exist?(input)
       next true unless File.extname(input).downcase == ".#{extension}"
-      ap input
       false
     end
 

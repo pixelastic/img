@@ -14,6 +14,8 @@ module ImageHelper
 
   # Check that all the input exists and are of the current type
   def validate_inputs(inputs, extension)
+    extension = extension.split(',') if extension.include?(',')
+
     # Using full path
     inputs = inputs.map do |input|
       File.expand_path(input)
@@ -22,27 +24,39 @@ module ImageHelper
     # Rejecting non-existing files and files of the wrong extension
     inputs = inputs.reject do |input|
       next true unless File.exist?(input)
-      next true unless File.extname(input).downcase == ".#{extension}"
+
+      extname = File.extname(input).downcase
+      if extension.is_a? Array
+        next true unless extension.include?(extname[1..-1])
+      else
+        next true unless extension == ".#{extension}"
+      end
       false
     end
 
     # Displaying error and stopping
-    if inputs.empty?
-      puts 'Usage:'
-      puts @usage
-      puts ''
-      puts @documentation
-      exit 1
-    end
+    display_usage if inputs.empty?
 
     inputs
   end
 
-  # Convert the specified to the specified extension
-  def convert(input, extension)
+  def display_usage
+    puts 'Usage:'
+    puts @usage
+    puts ''
+    puts @documentation
+    exit 1
+  end
+
+  def change_extension(input, extension)
     dirname = File.dirname(input)
     basename = File.basename(input, File.extname(input))
-    output = File.join(dirname, "#{basename}.#{extension}")
+    File.join(dirname, "#{basename}.#{extension}")
+  end
+
+  # Convert the specified to the specified extension
+  def convert(input, extension)
+    output = change_extension(input, extension)
     `convert #{input.shellescape} #{output.shellescape}`
   end
 
@@ -56,6 +70,12 @@ module ImageHelper
   def height(input)
     raw = `exiftool -ImageHeight #{input.shellescape}`
     raw.split(':')[-1].to_i
+  end
+
+  # Resize the specified input
+  def resize(input, dimensions)
+    output = input
+    `convert #{input.shellescape} -resize #{dimensions} #{output.shellescape}`
   end
 
 end

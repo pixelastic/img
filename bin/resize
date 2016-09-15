@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+require_relative '../lib/image_helper'
+
+# Resize image to the specified dimensions
+class Resize
+  include ImageHelper
+  def initialize(*inputs)
+    @usage = [
+      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x300',
+      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200!x300!',
+      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x',
+      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] x300'
+    ]
+
+    @documentation = 'Resize input files'
+
+    @dimensions = inputs.pop
+    display_usage if @dimensions.nil?
+
+    @inputs = validate_inputs(inputs, 'jpg,gif,png')
+  end
+
+  def run
+    @inputs.each do |input|
+      resize(input, @dimensions)
+      puts "✔ Resize #{File.basename(input)} to #{@dimensions}"
+    end
+  end
+end
+Resize.new(*ARGV).run

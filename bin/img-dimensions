@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+require_relative '../lib/image_helper'
+
+# Display the image dimensions in pixel
+class ImgDimensions
+  include ImageHelper
+  def initialize(input)
+    @usage = 'img-dimensions ./input.{gif,jpg,png}'
+    @documentation = 'Returns the image dimensions'
+
+    exit 1 unless image?(input)
+
+    @input = File.expand_path(input)
+  end
+
+  def run
+    puts "#{width(@input)}x#{height(@input)}"
+  end
+end
+ImgDimensions.new(ARGV[0]).run

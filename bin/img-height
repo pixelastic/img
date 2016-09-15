@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+require_relative '../lib/image_helper'
+
+# Display the image height in pixel
+class ImgHeight
+  include ImageHelper
+  def initialize(input)
+    @usage = 'img-height ./input.{gif,jpg,png}'
+    @documentation = 'Returns the image height'
+
+    exit 1 unless image?(input)
+
+    @input = File.expand_path(input)
+  end
+
+  def run
+    puts height(@input)
+  end
+end
+ImgHeight.new(ARGV[0]).run

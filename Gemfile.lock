@@ -2,12 +2,14 @@ GEM
   remote: http://rubygems.org/
   specs:
     awesome_print (1.7.0)
+    filesize (0.1.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   awesome_print (~> 1.6)
+  filesize
 
 BUNDLED WITH
    1.13.0

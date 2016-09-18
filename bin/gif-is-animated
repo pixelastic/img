@@ -15,8 +15,7 @@ class GifIsAnimated
   end
 
   def run
-    frames = `identify -format %n #{@input.shellescape}`
-    exit 1 if frames.to_f == 1
+    exit 1 unless animated_gif?(@input)
     exit 0
   end
 end

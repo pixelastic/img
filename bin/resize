@@ -2,20 +2,34 @@
 require_relative '../lib/image_helper'
 
 # Resize image to the specified dimensions
+# TODO: Should correctly handle resizing animated gif (coalesce)
+# Should allow passing a -f to force discarding the ratio
 class Resize
   include ImageHelper
   def initialize(*inputs)
     @usage = [
-      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x300',
-      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200!x300!',
-      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x',
-      'resize ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] x300'
+      'resize [-f] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x300',
+      'resize [-f] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x',
+      'resize [-f] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] x300'
     ]
 
     @documentation = 'Resize input files'
 
+    # By default, we keep the aspect ratio. If -f is passed, we bypass it
+    @force = false
+    if inputs.include?('-f')
+      @force = true
+      inputs.delete('-f')
+    end
+
+    # Dimensions to pass to the underlying imagemagick
     @dimensions = inputs.pop
     display_usage if @dimensions.nil?
+    if @force
+      split = @dimensions.split('x')
+      split = split.map { |dimension| "#{dimension}!" }
+      @dimensions = split.join('x')
+    end
 
     @inputs = validate_inputs(inputs, 'jpg,gif,png')
   end

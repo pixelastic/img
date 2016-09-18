@@ -5,6 +5,10 @@ This repository holds a bunch of command line scripts I use to manipulate images
 
 ## ⚠ Work in progress ⚠
 
+## Dependencies
+
+- ImageMagick (`convert`, `mogrify`, `identify`)
+- Gifsicle
 
 ## Available scripts
 
@@ -16,7 +20,7 @@ This repository holds a bunch of command line scripts I use to manipulate images
 #### png2jpg
   Will convert any number of PNG images into their JPG versions
 
-#### png2jpg
+#### png2ico
   Will convert any number of PNG images into their ICO versions
 
 #### gif2png
@@ -26,21 +30,24 @@ This repository holds a bunch of command line scripts I use to manipulate images
 ### Modification
 
 #### resize
-  Will resize the input files to the specified dimensions. If one dimension
-  is given, the other will be resized to keep the same image ratio
+  Will resize the input files to the specified dimensions. Image ratio will be
+  kept if possible. Pass `-f` to force the dimensions.
+
+#### gifmin
+  Losslessly compress GIF files
 
 ### Information
 
 #### gif-is-animated
   Check if the input file is an animated GIF or not
 
-#### img-width
-  Return the width of the file
+#### width
+  Return the width of the specified files
 
-#### img-height
-  Return the height of the file
+#### height
+  Return the height of the specified files
 
-#### img-dimensions
-  Return the width x height of the file
+#### dimensions
+  Return the width x height of the specified files
 
 

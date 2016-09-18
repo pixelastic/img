@@ -1,5 +1,6 @@
 require 'awesome_print'
 require 'shellwords'
+require 'filesize'
 
 # Allow access to current git repository state
 module ImageHelper
@@ -29,7 +30,7 @@ module ImageHelper
       if extension.is_a? Array
         next true unless extension.include?(extname[1..-1])
       else
-        next true unless extension == ".#{extension}"
+        next true unless extname == ".#{extension}"
       end
       false
     end
@@ -72,10 +73,82 @@ module ImageHelper
     raw.split(':')[-1].to_i
   end
 
-  # Resize the specified input
-  def resize(input, dimensions)
-    output = input
-    `convert #{input.shellescape} -resize #{dimensions} #{output.shellescape}`
+  # Check if file is a gif
+  def gif?(input)
+    File.extname(input).casecmp('.gif')
   end
 
+  # Returns true if input is an animated GIF
+  def animated_gif?(input)
+    return false unless gif?(input)
+    frames = `identify -format %n #{input.shellescape}`.to_i
+    frames > 1
+  end
+
+  # Specific method to resize GIF
+  def resize_gif(input, dimensions)
+    gifsicle_options = [
+      '--batch',
+      "--resize #{dimensions}",
+      '--colors 256',
+      input.shellescape
+    ]
+
+    command = "gifsicle #{gifsicle_options.join(' ')} 2>/dev/null"
+
+    `#{command}`
+  end
+
+  # Resize the specified input
+  def resize(input, dimensions)
+    if animated_gif?(input)
+      dimensions = dimensions.delete('!')
+      return resize_gif(input, dimensions)
+    end
+
+    options = [
+      "-resize #{dimensions}"
+    ]
+    output = input
+    `convert #{input.shellescape} #{options.join(' ')} #{output.shellescape}`
+  end
+
+  # Return a filesize in B
+  def filesize(path)
+    File.size(path).to_f
+  end
+
+  # Return a human readable filesize
+  def readable_filesize(filesize)
+    Filesize.from("#{filesize} B").pretty.delete(' ')
+  end
+
+  # Display the amount of filesize saved
+  def display_compress(input, from, to)
+    percent = (1 - (from / to)).round(2) * 100
+    readable_from = readable_filesize(from)
+    readable_to = readable_filesize(to)
+
+    basename = File.basename(input)
+
+    puts "✔ #{basename} #{readable_from} => #{readable_to} (#{percent}%)"
+  end
+
+  # Compress a GIF file
+  def compress_gif(input)
+    before = filesize(input)
+    options = [
+      '--batch',
+      '-O3',
+      '--colors 256',
+      input.shellescape
+    ]
+
+    command = "gifsicle #{options.join(' ')} 2>/dev/null"
+    `#{command}`
+
+    after = filesize(input)
+
+    display_compress(input, before, after)
+  end
 end

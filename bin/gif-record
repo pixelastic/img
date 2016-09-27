@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+require 'time'
+require_relative '../lib/image_helper'
+
+class GifRecord
+  include ImageHelper
+  def initialize
+    @tmp_dir = File.expand_path(File.join('~', 'local', 'tmp', 'gif-record'))
+    @screenshot_dir = File.expand_path(File.join('~', 'perso', 'pictures', 'tmp', 'screenshots'))
+    FileUtils.mkdir_p(@tmp_dir)
+    @lock_file = File.join(@tmp_dir, 'lock')
+    @tmp_video_file = File.join(@tmp_dir, 'raw.mkv')
+    @gif_file = File.join(@screenshot_dir, "#{DateTime.now.strftime('%F_%Hh%mm%S')}.gif")
+    FileUtils.touch(@gif_file)
+  end
+
+  # Write the lock file, meaning a record is in progress
+  def write_lock
+    FileUtils.touch(@lock_file)
+  end
+
+  # Delete the lock file, meaning no record is in progress
+  def remove_lock
+    File.delete(@lock_file)
+  end
+  
+  # Write the PID of the process running the record
+  def set_pid(pid)
+    File.open(@lock_file, 'w') { |file| file.write(pid) }
+  end
+
+  # Read the PID of the process running the record
+  def get_pid
+    File.open(@lock_file, 'r').read.to_i
+  end
+
+  # Check if a record is in progress
+  def running?
+    File.exists?(@lock_file)
+  end
+
+  # Get duration of the file, in seconds
+  def get_video_duration
+    command = "exiftool #{@tmp_video_file.shellescape} | grep 'Duration'"
+    raw = `#{command}`.strip
+    raw.split(':')[1].strip.split(' ')[0].to_i
+  end
+
+  def stop_recording
+    # Stop the current recording
+    begin
+      Process.kill('QUIT', get_pid)
+      sleep 1
+      notify 'Record stopped'
+    rescue
+    end
+
+    # Remove the lock
+    remove_lock
+
+    # Convert to gif
+    convert_to_gif
+
+    `eog #{@gif_file.shellescape} && nautilus #{@screenshot_dir.shellescape}`
+  end
+
+  def convert_to_gif
+    new_duration = get_video_duration - 2
+    gifify_options = [
+      @tmp_video_file.shellescape,
+      "-o #{@gif_file}",
+      "--to=#{new_duration}"
+    ]
+    command = "gifify #{gifify_options.join(' ')}"
+    notify 'Converting video to GIF'
+    `#{command}`
+    notify 'Video converted to gif'
+  end
+
+  def start_recording
+    coordinates = screenshot_coordinates
+
+    # We write the lock so the next call to gif-record will stop the recording
+    write_lock
+
+    ffmpeg_options = [
+      '-y', # Overwrite existing files without asking
+      '-t 60', # No more than 60s
+      '-f x11grab',
+      '-r 25',
+      "-s #{coordinates[:width]}x#{coordinates[:height]}",
+      "-i :0.0+#{coordinates[:x]},#{coordinates[:y]}",
+      @tmp_video_file.shellescape,
+      '-loglevel quiet'
+    ]
+    command = "ffmpeg #{ffmpeg_options.join(' ')}"
+
+    # We record the screen in a background process but save its PID
+    background = IO.popen(command)
+    pid = background.pid
+    set_pid(pid)
+  end
+
+  def run
+    # Stop the current recording
+    if running?
+      stop_recording
+      return
+    end
+
+    start_recording
+
+  end
+end
+GifRecord.new.run

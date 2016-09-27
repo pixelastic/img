@@ -8,7 +8,10 @@ This repository holds a bunch of command line scripts I use to manipulate images
 ## Dependencies
 
 - ImageMagick (`convert`, `mogrify`, `identify`)
-- Gifsicle
+- Giflossy ([Gifsicle](https://github.com/pornel/giflossy/releases) fork)
+- Gifify
+- Ffmpeg
+- Exiftool
 
 ## Available scripts
 

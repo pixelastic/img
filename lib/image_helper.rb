@@ -1,6 +1,7 @@
+require 'fileutils'
 require 'awesome_print'
-require 'shellwords'
 require 'filesize'
+require 'shellwords'
 
 # Allow access to current git repository state
 module ImageHelper
@@ -150,5 +151,23 @@ module ImageHelper
     after = filesize(input)
 
     display_compress(input, before, after)
+  end
+
+  # Select part of the screen and return its coordinate
+  def screenshot_coordinates
+    command = 'slop -f "%x %y %w %h"'
+    output = `#{command}`
+
+    split = output.split(' ')
+    {
+      x: split[0].to_i,
+      y: split[1].to_i,
+      width: split[2].to_i,
+      height: split[3].to_i
+    }
+  end
+
+  def notify(message)
+    `notify-send "#{message}"`
   end
 end

@@ -10,7 +10,7 @@ class GifRecord
     FileUtils.mkdir_p(@tmp_dir)
     @lock_file = File.join(@tmp_dir, 'lock')
     @tmp_video_file = File.join(@tmp_dir, 'raw.mkv')
-    @gif_file = File.join(@screenshot_dir, "#{DateTime.now.strftime('%F_%Hh%mm%S')}.gif")
+    @gif_file = File.join(@screenshot_dir, "#{DateTime.now.strftime('%F_%Hh%Mm%S')}.gif")
     FileUtils.touch(@gif_file)
   end
 

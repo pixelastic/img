@@ -155,7 +155,7 @@ module ImageHelper
 
   # Select part of the screen and return its coordinate
   def screenshot_coordinates
-    command = 'slop -f "%x %y %w %h"'
+    command = 'slop --opengl -f "%x %y %w %h"'
     output = `#{command}`
 
     split = output.split(' ')

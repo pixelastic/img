@@ -86,6 +86,13 @@ module ImageHelper
     frames > 1
   end
 
+  # Returns true if gif is animated with an infinite loop
+  def looped_gif?(input)
+    return false unless gif?(input)
+    raw = `exiftool #{input.shellescape} | grep 'Animation Iterations'`.strip
+    raw.split(' : ')[1] == 'Infinite'
+  end
+
   # Specific method to resize GIF
   def resize_gif(input, dimensions)
     gifsicle_options = [

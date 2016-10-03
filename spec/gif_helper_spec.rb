@@ -135,4 +135,20 @@ describe(GifHelper) do
       expect(actual).to eq false
     end
   end
+
+  describe 'resize_gif' do
+    it 'should resize to the specified dimensions ' do
+      # Given
+      input = copy(gif_still)
+
+      # When
+      test_instance.resize_gif(input, '100x50')
+
+      # Then
+      width = test_instance.width(input)
+      height = test_instance.height(input)
+      expect(width).to eq 100
+      expect(height).to eq 50
+    end
+  end
 end

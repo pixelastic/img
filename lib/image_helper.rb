@@ -2,58 +2,25 @@ require 'fileutils'
 require 'awesome_print'
 require 'filesize'
 require 'shellwords'
-require_relative './gif_helper'
+require_relative './arguments_helper'
 require_relative './dimensions_helper'
+require_relative './filesize_helper'
+require_relative './gif_helper'
+require_relative './jpg_helper'
+require_relative './output_helper'
+require_relative './png_helper'
+require_relative './screenshot_helper'
 
 # Allow access to current git repository state
 module ImageHelper
-  include GifHelper
+  include ArgumentsHelper
   include DimensionsHelper
-
-  # Check if the input is an image
-  def image?(input)
-    input = File.expand_path(input)
-    return false unless File.exist?(input)
-    allowed_extensions = %w(.gif .png .jpg)
-
-    allowed_extensions.include?(File.extname(input))
-  end
-
-  # Check that all the input exists and are of the current type
-  def validate_inputs(inputs, extension)
-    extension = extension.split(',') if extension.include?(',')
-
-    # Using full path
-    inputs = inputs.map do |input|
-      File.expand_path(input)
-    end
-
-    # Rejecting non-existing files and files of the wrong extension
-    inputs = inputs.reject do |input|
-      next true unless File.exist?(input)
-
-      extname = File.extname(input).downcase
-      if extension.is_a? Array
-        next true unless extension.include?(extname[1..-1])
-      else
-        next true unless extname == ".#{extension}"
-      end
-      false
-    end
-
-    # Displaying error and stopping
-    display_usage if inputs.empty?
-
-    inputs
-  end
-
-  def display_usage
-    puts 'Usage:'
-    puts @usage
-    puts ''
-    puts @documentation
-    exit 1
-  end
+  include FilesizeHelper
+  include GifHelper
+  include JpgHelper
+  include OutputHelper
+  include PngHelper
+  include ScreenshotHelper
 
   def change_extension(input, extension)
     dirname = File.dirname(input)
@@ -69,7 +36,7 @@ module ImageHelper
 
   # Resize the specified input
   def resize(input, dimensions)
-    if animated_gif?(input)
+    if gif?(input)
       dimensions = dimensions.delete('!')
       return resize_gif(input, dimensions)
     end
@@ -79,62 +46,5 @@ module ImageHelper
     ]
     output = input
     `convert #{input.shellescape} #{options.join(' ')} #{output.shellescape}`
-  end
-
-  # Return a filesize in B
-  def filesize(path)
-    File.size(path).to_f
-  end
-
-  # Return a human readable filesize
-  def readable_filesize(filesize)
-    Filesize.from("#{filesize} B").pretty.delete(' ')
-  end
-
-  # Display the amount of filesize saved
-  def display_compress(input, from, to)
-    percent = (1 - (from / to)).round(2) * 100
-    readable_from = readable_filesize(from)
-    readable_to = readable_filesize(to)
-
-    basename = File.basename(input)
-
-    puts "✔ #{basename} #{readable_from} => #{readable_to} (#{percent}%)"
-  end
-
-  # Compress a GIF file
-  def compress_gif(input)
-    before = filesize(input)
-    options = [
-      '--batch',
-      '-O3',
-      '--colors 256',
-      input.shellescape
-    ]
-
-    command = "gifsicle #{options.join(' ')} 2>/dev/null"
-    `#{command}`
-
-    after = filesize(input)
-
-    display_compress(input, before, after)
-  end
-
-  # Select part of the screen and return its coordinate
-  def screenshot_coordinates
-    command = 'slop --opengl -f "%x %y %w %h"'
-    output = `#{command}`
-
-    split = output.split(' ')
-    {
-      x: split[0].to_i,
-      y: split[1].to_i,
-      width: split[2].to_i,
-      height: split[3].to_i
-    }
-  end
-
-  def notify(message)
-    `notify-send "#{message}"`
   end
 end

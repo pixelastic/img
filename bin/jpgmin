@@ -1,0 +1,133 @@
+#!/usr/bin/env ruby
+require_relative '../lib/image_helper'
+
+# Compress JPG images in the best lossy way
+class JPGmin
+  include ImageHelper
+  def initialize(*inputs)
+    @usage = 'jpgmin ./input.jpg [./input2.jpg]'
+    @documentation = 'Compress jpg files'
+
+    @inputs = validate_inputs(inputs, 'jpg')
+
+    @lower_bound = 0.014250
+    @upper_bound = 0.016500
+  end
+
+
+  
+  def compress(file, quality)
+    new_file = "#{quality}.jpg"
+    options = [
+      file.shellescape,
+      "-quality #{quality}",
+      new_file.shellescape
+    ]
+    command = "convert #{options.join(' ')}"
+    `#{command}`
+
+    new_file
+  end
+
+  def dssim(original, compressed)
+    # File must be a png, dssim only works on png
+    original_pngfile = original.gsub(/jpg$/, 'png')
+    compressed_pngfile = compressed.gsub(/jpg$/, 'png')
+
+    convert(original, 'png') unless File.exist?(original_pngfile)
+    convert(compressed, 'png') unless File.exist?(compressed_pngfile)
+
+
+    difference = `dssim #{original_pngfile.shellescape} #{compressed_pngfile.shellescape}`
+
+    value = difference.strip.split("\t")[0].to_f
+    value
+  end
+
+  def acceptable?(value)
+    value >= @lower_bound && value <= @upper_bound
+  end
+
+  def least_bad(list)
+    max = 1
+    best_quality = nil
+    list.each do |quality, dssim|
+      next if dssim - @upper_bound < 0
+      next if dssim > max
+
+      max = dssim
+      best_quality = quality
+    end
+    best_quality
+  end
+
+  def run
+    input = @inputs[0]
+
+    previous_quality = 160
+    quality = 80
+    direction = :decrease
+    tested = {}
+
+    loop do
+      # If we already tested that quality, we are stuck in an endless loop
+      # The best we can do is to output the better ratio compression we found
+      if tested.key?(quality)
+        quality = least_bad(tested)
+        break
+      end
+
+      compressed = "#{quality}.png"
+      compressed = compress(input, quality) unless File.exist?(compressed)
+      dssim = dssim(input, compressed)
+      tested[quality] = dssim
+
+      # Quality is in the bounds, we keep it
+      break if acceptable?(dssim)
+
+      # Quality is still too high, we can compress more
+      if dssim < @lower_bound
+        # We keep decreasing quickly if still too high quality
+        if direction == :decrease
+          tmp_previous = quality
+          quality -= (previous_quality - quality) / 2
+          previous_quality = tmp_previous
+          next
+        end
+
+        if direction == :increase
+          tmp_previous = quality
+          quality += (previous_quality - quality) / 2
+          previous_quality = tmp_previous
+          direction = :decrease
+          next
+        end
+      end
+
+      # Quality is too low, we need fine-tune
+      if dssim > @upper_bound
+        if direction == :increase
+          tmp_previous = quality
+          quality += (previous_quality - quality) / 2
+          previous_quality = tmp_previous
+          next
+        end
+
+        # We decreased to much and now it's too compressed
+        if direction == :decrease
+          tmp_previous = quality
+          quality += (previous_quality - quality) / 2
+          previous_quality = tmp_previous
+          direction = :increase
+          next
+        end
+      end
+
+    end
+    ap quality
+  end
+end
+JPGmin.new(*ARGV).run
+
+
+

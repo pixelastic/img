@@ -2,9 +2,14 @@ require 'fileutils'
 require 'awesome_print'
 require 'filesize'
 require 'shellwords'
+require_relative './gif_helper'
+require_relative './dimensions_helper'
 
 # Allow access to current git repository state
 module ImageHelper
+  include GifHelper
+  include DimensionsHelper
+
   # Check if the input is an image
   def image?(input)
     input = File.expand_path(input)
@@ -60,51 +65,6 @@ module ImageHelper
   def convert(input, extension)
     output = change_extension(input, extension)
     `convert #{input.shellescape} #{output.shellescape}`
-  end
-
-  # Returns the width of the input
-  def width(input)
-    raw = `exiftool -ImageWidth #{input.shellescape}`
-    raw.split(':')[-1].to_i
-  end
-
-  # Returns the height of the input
-  def height(input)
-    raw = `exiftool -ImageHeight #{input.shellescape}`
-    raw.split(':')[-1].to_i
-  end
-
-  # Check if file is a gif
-  def gif?(input)
-    File.extname(input).casecmp('.gif')
-  end
-
-  # Returns true if input is an animated GIF
-  def animated_gif?(input)
-    return false unless gif?(input)
-    frames = `identify -format %n #{input.shellescape}`.to_i
-    frames > 1
-  end
-
-  # Returns true if gif is animated with an infinite loop
-  def looped_gif?(input)
-    return false unless gif?(input)
-    raw = `exiftool #{input.shellescape} | grep 'Animation Iterations'`.strip
-    raw.split(' : ')[1] == 'Infinite'
-  end
-
-  # Specific method to resize GIF
-  def resize_gif(input, dimensions)
-    gifsicle_options = [
-      '--batch',
-      "--resize #{dimensions}",
-      '--colors 256',
-      input.shellescape
-    ]
-
-    command = "gifsicle #{gifsicle_options.join(' ')} 2>/dev/null"
-
-    `#{command}`
   end
 
   # Resize the specified input

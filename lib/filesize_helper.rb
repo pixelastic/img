@@ -2,12 +2,13 @@
 module FilesizeHelper
   # Return a filesize in B
   def filesize(path)
+    return nil unless File.exist?(path)
     File.size(path).to_f
   end
 
   # Return a human readable filesize
   def readable_filesize(filesize)
-    Filesize.from("#{filesize} B").pretty.delete(' ')
+    Filesize.from("#{filesize} B").pretty
   end
 
   # Display the amount of filesize saved
@@ -20,5 +21,4 @@ module FilesizeHelper
 
     puts "✔ #{basename} #{readable_from} => #{readable_to} (#{percent}%)"
   end
-
 end

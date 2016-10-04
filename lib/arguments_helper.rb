@@ -10,29 +10,28 @@ module ArgumentsHelper
   end
 
   # Check that all the input exists and are of the current type
-  def validate_inputs(inputs, extension)
-    extension = extension.split(',') if extension.include?(',')
+  def validate_inputs(inputs, ext)
+    # Convert any extension to an array of symbols
+    ext = ext.split(',') if ext.is_a? String
+    ext = [ext] unless ext.is_a? Array
+    ext = ext.map(&:to_sym)
 
     # Using full path
     inputs = inputs.map do |input|
       File.expand_path(input)
     end
 
-    # Rejecting non-existing files and files of the wrong extension
-    inputs = inputs.reject do |input|
-      next true unless File.exist?(input)
+    # Keeping only if exists and match the valid types
+    inputs = inputs.select do |input|
+      next false unless File.exist?(input)
 
-      extname = File.extname(input).downcase
-      if extension.is_a? Array
-        next true unless extension.include?(extname[1..-1])
-      else
-        next true unless extname == ".#{extension}"
+      should_keep = false
+      ext.each do |extension|
+        should_keep = true if send("#{extension}?", input)
       end
-      false
-    end
 
-    # Displaying error and stopping
-    display_usage if inputs.empty?
+      should_keep
+    end
 
     inputs
   end

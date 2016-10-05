@@ -15,7 +15,7 @@ class GifIsAnimated
   end
 
   def run
-    exit 1 unless animated_gif?(@input)
+    exit 1 unless animated?(@input)
     exit 0
   end
 end

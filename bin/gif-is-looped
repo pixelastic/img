@@ -15,7 +15,7 @@ class GifIsLooped
   end
 
   def run
-    exit 1 unless looped_gif?(@input)
+    exit 1 unless looped?(@input)
     exit 0
   end
 end

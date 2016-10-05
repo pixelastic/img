@@ -44,13 +44,13 @@ describe(GifHelper) do
     end
   end
 
-  describe 'animated_gif?' do
+  describe 'animated?' do
     it 'should return true for animated gif' do
       # Given
       input = gif_animated
 
       # When
-      actual = test_instance.animated_gif?(input)
+      actual = test_instance.animated?(input)
 
       # Then
       expect(actual).to eq true
@@ -61,7 +61,7 @@ describe(GifHelper) do
       input = gif_loop_once
 
       # When
-      actual = test_instance.animated_gif?(input)
+      actual = test_instance.animated?(input)
 
       # Then
       expect(actual).to eq true
@@ -72,7 +72,7 @@ describe(GifHelper) do
       input = gif_still
 
       # When
-      actual = test_instance.animated_gif?(input)
+      actual = test_instance.animated?(input)
 
       # Then
       expect(actual).to eq false
@@ -83,20 +83,20 @@ describe(GifHelper) do
       input = jpg
 
       # When
-      actual = test_instance.animated_gif?(input)
+      actual = test_instance.animated?(input)
 
       # Then
       expect(actual).to eq false
     end
   end
 
-  describe 'looped_gif?' do
+  describe 'looped?' do
     it 'should return true for infinite loop gif' do
       # Given
       input = gif_animated
 
       # When
-      actual = test_instance.looped_gif?(input)
+      actual = test_instance.looped?(input)
 
       # Then
       expect(actual).to eq true
@@ -107,7 +107,7 @@ describe(GifHelper) do
       input = gif_still
 
       # When
-      actual = test_instance.looped_gif?(input)
+      actual = test_instance.looped?(input)
 
       # Then
       expect(actual).to eq false
@@ -118,7 +118,7 @@ describe(GifHelper) do
       input = gif_loop_once
 
       # When
-      actual = test_instance.looped_gif?(input)
+      actual = test_instance.looped?(input)
 
       # Then
       expect(actual).to eq false
@@ -129,7 +129,7 @@ describe(GifHelper) do
       input = gif_loop_five
 
       # When
-      actual = test_instance.looped_gif?(input)
+      actual = test_instance.looped?(input)
 
       # Then
       expect(actual).to eq false
@@ -149,6 +149,73 @@ describe(GifHelper) do
       height = test_instance.height(input)
       expect(width).to eq 100
       expect(height).to eq 50
+    end
+  end
+
+  describe 'unloop' do
+    it 'should make a looped gif play only one' do
+      # Given
+      input = copy(gif_animated)
+
+      # When
+      test_instance.unloop(input)
+      actual = test_instance.looped?(input)
+
+      # Then
+      expect(actual).to eq true
+    end
+  end
+
+  describe 'loop' do
+    it 'should make an unlooped gif loop' do
+      # Given
+      input = copy(gif_loop_once)
+
+      # When
+      test_instance.loop(input)
+      actual = test_instance.looped?(input)
+
+      # Then
+      expect(actual).to eq true
+    end
+  end
+
+  describe 'speed' do
+    it 'should return a number explaining the speed of the animation' do
+      # Given
+      input = gif_animated
+
+      # When
+      actual = test_instance.speed(input)
+
+      # Then
+      expect(actual).to eq 10
+    end
+
+    it 'should return 0 for still files' do
+      # Given
+      input = gif_still
+
+      # When
+      actual = test_instance.speed(input)
+
+      # Then
+      expect(actual).to eq 0
+    end
+  end
+
+  describe 'change_speed' do
+    it 'should change the speed of the file' do
+      # Given
+      input = copy(gif_animated)
+      speed = 15
+
+      # When
+      test_instance.set_speed(input, speed)
+      actual = test_instance.speed(input)
+
+      # Then
+      expect(actual).to eq speed
     end
   end
 end

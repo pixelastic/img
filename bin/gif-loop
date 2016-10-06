@@ -13,7 +13,7 @@ class GifLoop
 
   def run
     @inputs.each do |input|
-      loop(input)
+      make_loop(input)
     end
   end
 end

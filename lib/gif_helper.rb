@@ -52,7 +52,7 @@ module GifHelper
   end
 
   # Set an infinite loop on an animated gif
-  def loop(input)
+  def make_loop(input)
     options = [
       '--batch',
       '--loopcount',

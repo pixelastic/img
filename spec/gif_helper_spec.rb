@@ -166,13 +166,13 @@ describe(GifHelper) do
     end
   end
 
-  describe 'loop' do
+  describe 'make_loop' do
     it 'should make an unlooped gif loop' do
       # Given
       input = copy(gif_loop_once)
 
       # When
-      test_instance.loop(input)
+      test_instance.make_loop(input)
       actual = test_instance.looped?(input)
 
       # Then

@@ -14,36 +14,6 @@ class JPGmin
     @upper_bound = 0.016500
   end
 
-
-  
-  def compress(file, quality)
-    new_file = "#{quality}.jpg"
-    options = [
-      file.shellescape,
-      "-quality #{quality}",
-      new_file.shellescape
-    ]
-    command = "convert #{options.join(' ')}"
-    `#{command}`
-
-    new_file
-  end
-
-  def dssim(original, compressed)
-    # File must be a png, dssim only works on png
-    original_pngfile = original.gsub(/jpg$/, 'png')
-    compressed_pngfile = compressed.gsub(/jpg$/, 'png')
-
-    convert(original, 'png') unless File.exist?(original_pngfile)
-    convert(compressed, 'png') unless File.exist?(compressed_pngfile)
-
-
-    difference = `dssim #{original_pngfile.shellescape} #{compressed_pngfile.shellescape}`
-
-    value = difference.strip.split("\t")[0].to_f
-    value
-  end
-
   def acceptable?(value)
     value >= @lower_bound && value <= @upper_bound
   end

@@ -33,6 +33,6 @@ def init_tmp_directory
     Time.now.strftime('%Y-%m-%d_%H-%M-%S'),
     Time.now.to_f.to_s.tr('.', '')
   ].join('_')
-  @tmp_path = File.join(Dir.tmpdir, 'img', "tmp_#{now}")
+  @tmp_path = File.join(Dir.tmpdir, 'img/spec', "tmp_#{now}")
   FileUtils.mkdir_p(@tmp_path)
 end

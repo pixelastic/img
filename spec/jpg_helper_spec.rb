@@ -28,4 +28,36 @@ describe(JpgHelper) do
       expect(actual).to eq true
     end
   end
+
+  describe 'compress_jpg' do
+    it 'should compress JPG files into smaller files' do
+      # Given
+      input = copy(jpg)
+      before = test_instance.filesize(input)
+
+      # When
+      test_instance.compress_jpg(input)
+      after = test_instance.filesize(input)
+
+      # Then
+      expect(after).to be < before
+    end
+
+    it 'should compress more when a smaller quality is given' do
+      # Given
+      input = copy(jpg)
+
+      # When
+      test_instance.compress_jpg(input, 80)
+      filesize80 = test_instance.filesize(input)
+
+      input = copy(jpg)
+      test_instance.compress_jpg(input, 20)
+      filesize20 = test_instance.filesize(input)
+
+      # Then
+      expect(filesize20).to be < filesize80
+    end
+  end
+  
 end

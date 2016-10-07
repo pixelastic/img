@@ -9,6 +9,7 @@ require_relative './gif_helper'
 require_relative './jpg_helper'
 require_relative './output_helper'
 require_relative './png_helper'
+require_relative './quality_helper'
 require_relative './screenshot_helper'
 
 # Allow access to current git repository state
@@ -20,6 +21,7 @@ module ImageHelper
   include JpgHelper
   include OutputHelper
   include PngHelper
+  include QualityHelper
   include ScreenshotHelper
 
   def change_extension(input, extension)
@@ -32,6 +34,7 @@ module ImageHelper
   def convert(input, extension)
     output = change_extension(input, extension)
     `convert #{input.shellescape} #{output.shellescape}`
+    output
   end
 
   # Resize the specified input

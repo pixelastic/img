@@ -8,35 +8,38 @@ class Resize
   include ImageHelper
   def initialize(*inputs)
     @usage = [
-      'resize [-f] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x300',
-      'resize [-f] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x',
-      'resize [-f] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] x300'
+      'resize [--allow-increase, --bypass-ratio] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x300',
+      'resize [--allow-increase, --bypass-ratio] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] 200x',
+      'resize [--allow-increase, --bypass-ratio] ./input.{jpg,gif,png} [./input2.{jpg,gif,png}] x300'
     ]
 
     @documentation = 'Resize input files'
 
+    @allow_increase = false
+    @bypass_ratio = false
+
     # By default, we keep the aspect ratio. If -f is passed, we bypass it
-    @force = false
-    if inputs.include?('-f')
-      @force = true
-      inputs.delete('-f')
+    if inputs.include?('--bypass-ratio')
+      @bypass_ratio = true
+      inputs.delete('--bypass-ratio')
+    end
+    if inputs.include?('--allow_increase')
+      @bypass_ratio = true
+      inputs.delete('--allow_increase')
     end
 
     # Dimensions to pass to the underlying imagemagick
     @dimensions = inputs.pop
     display_usage if @dimensions.nil?
-    if @force
-      split = @dimensions.split('x')
-      split = split.map { |dimension| "#{dimension}!" }
-      @dimensions = split.join('x')
-    end
-
     @inputs = validate_inputs(inputs, 'jpg,gif,png')
   end
 
   def run
     @inputs.each do |input|
-      resize(input, @dimensions)
+      resize(input,
+             @dimensions,
+             bypass_ratio: @bypass_ratio,
+             allow_increase: @allow_increase)
       puts "✔ Resize #{File.basename(input)} to #{@dimensions}"
     end
   end

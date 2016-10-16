@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe(JpgHelper) do
   let(:test_instance) { Class.new { include ImageHelper }.new }
-  let(:jpg) { fixture('jpg/tomb.jpg') }
-  let(:jpeg) { fixture('jpg/tomb.jpeg') }
+  let(:jpg) { fixture('jpg/game.jpg') }
+  let(:jpeg) { fixture('jpg/game.jpeg') }
 
   describe 'jpg?' do
     it 'returns true if file is a jpg' do
@@ -58,6 +58,19 @@ describe(JpgHelper) do
       # Then
       expect(filesize20).to be < filesize80
     end
+
+    it 'should allow specifying an output file' do
+      # Given
+      input = copy(jpg)
+      before = test_instance.filesize(input)
+      output_path = File.join(File.dirname(input), 'output.jpg')
+
+      # When
+      actual = test_instance.compress_jpg(input, 80, output_path)
+      after = test_instance.filesize(actual)
+
+      # Then
+      expect(after).to be < before
+    end
   end
-  
 end

@@ -5,7 +5,7 @@ require_relative '../lib/image_helper'
 class ImgDimensions
   include ImageHelper
   def initialize(*inputs)
-    @usage = 'img-dimensions ./input.{gif,jpg,png} [./input.{gif,jpg,png}]'
+    @usage = 'dimensions ./input.{gif,jpg,png} [./input.{gif,jpg,png}]'
     @documentation = 'Returns the image dimensions'
 
     @inputs = validate_inputs(inputs, 'jpg,gif,png')

@@ -5,9 +5,9 @@ describe(QualityHelper) do
   let(:png) { fixture('png/tomb.png') }
   let(:png_compressed_20) { fixture('png/tomb_20.png') }
   let(:png_compressed_80) { fixture('png/tomb_80.png') }
-  let(:jpg) { fixture('jpg/tomb.jpg') }
-  let(:jpg_compressed_20) { fixture('jpg/tomb_20.jpg') }
-  let(:jpg_compressed_80) { fixture('jpg/tomb_80.jpg') }
+  let(:jpg) { fixture('jpg/game.jpg') }
+  let(:jpg_compressed_20) { fixture('jpg/game_20.jpg') }
+  let(:jpg_compressed_80) { fixture('jpg/game_80.jpg') }
 
   describe 'dssim' do
     it 'should return 0 when comparing the same file' do
@@ -86,7 +86,61 @@ describe(QualityHelper) do
     end
   end
 
-  describe 'compress' do
+  describe 'compress_best_dssim' do
+    it 'should find a dssim between boundaries' do
+      # Given
+      original = jpg
+      compressed = copy(original)
+
+      # When
+      test_instance.compress_best_dssim(compressed)
+
+      # Then
+      filesize_original = test_instance.filesize(original)
+      filesize_compressed = test_instance.filesize(compressed)
+      expect(filesize_compressed < filesize_original).to be true
+
+      # Then
+      is_similar = test_instance.similar?(original, compressed)
+      expect(is_similar).to be true
+    end
+
+    fit 'should not compress if already compressed' do
+      # Given
+      original = jpg_compressed_20
+      compressed = copy(original)
+
+      # When
+      test_instance.compress_best_dssim(compressed)
+
+      # Then
+      filesize_original = test_instance.filesize(original)
+      filesize_compressed = test_instance.filesize(compressed)
+      expect(filesize_compressed).to eq filesize_original
+    end
   end
 
+  describe 'compressed?' do
+    it 'should return true for compressed files' do
+      # Given
+      input = jpg_compressed_20
+
+      # When
+      actual = test_instance.compressed?(input)
+
+      # Then
+      expect(actual).to eq true
+    end
+
+    it 'should return false for non-compressed files' do
+      # Given
+      input = jpg
+
+      # When
+      actual = test_instance.compressed?(input)
+
+      # Then
+      expect(actual).to eq false
+    end
+  end
 end

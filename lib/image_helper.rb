@@ -37,17 +37,4 @@ module ImageHelper
     output
   end
 
-  # Resize the specified input
-  def resize(input, dimensions)
-    if gif?(input)
-      dimensions = dimensions.delete('!')
-      return resize_gif(input, dimensions)
-    end
-
-    options = [
-      "-resize #{dimensions}"
-    ]
-    output = input
-    `convert #{input.shellescape} #{options.join(' ')} #{output.shellescape}`
-  end
 end

@@ -3,9 +3,11 @@ require 'shellwords'
 
 # Quality related methods
 module QualityHelper
-  def initialize
-    @dssim_lower_bound = 0.014250
-    @dssim_upper_bound = 0.016500
+  def dssim_lower_bound
+    0.0045
+  end
+  def dssim_upper_bound
+    0.0047
   end
 
   # Convert a file to a temporary png
@@ -40,9 +42,78 @@ module QualityHelper
     value
   end
 
-  # Compress a file
-  def compress(input, quality = 80)
-    return compress_jpg(input, quality) if jpg?(input)
+  # Are two files similar?
+  def similar?(input, compressed)
+    score = dssim(input, compressed)
+    ap score
+    score >= dssim_lower_bound && score <= dssim_upper_bound
   end
+
+  # Compress a file
+  def compress(input, quality = 80, output = nil)
+    return compress_jpg(input, quality, output) if jpg?(input)
+  end
+
+  # Try to guess if a file is already compressed
+  def compressed?(input)
+    quality(input) <= 85
+  end
+
+  def quality(input)
+    `identify -format '%Q' #{input.shellescape}`.to_i
+  end
+
+  # Compress to the most aggressive quality, while still keeping a similar image
+  def compress_best_dssim(input)
+    # Stop if file already compressed
+    if compressed?(input)
+      yield(false) if block_given?
+      return input
+    end
+
+    previous_quality = nil
+    quality = 120
+    step = 80
+
+    extname = File.extname(input)
+    compressed_path = nil
+    direction = :down
+
+    loop do
+      # Binary search type of stepping
+      step = (step / 2).to_i
+      previous_quality = quality
+      quality -= step if direction == :down
+      quality += step if direction == :up
+
+      # Stop if we start going into an endless loop
+      break if quality == previous_quality
+
+      # yield to the outer block to display the current tested quality
+      yield(quality) if block_given?
+
+      # Create a compressed file on disk (removing previous unused)
+      FileUtils.rm(compressed_path) unless compressed_path.nil?
+      compressed_path = input.gsub(
+        /#{extname}$/,
+        ".#{quality}#{extname}"
+      )
+      compressed = compress(input, quality, compressed_path)
+      score = dssim(input, compressed)
+      # ap "#{quality} => #{score}"
+
+      break if score >= dssim_lower_bound && score <= dssim_upper_bound
+
+      # Change direction if going too far
+      direction = :up if direction == :down && score > dssim_upper_bound
+      direction = :down if direction == :up && score < dssim_lower_bound
+
+    end
+
+    FileUtils.mv(compressed_path, input, force: true)
+    input
+  end
+
+
 
 end

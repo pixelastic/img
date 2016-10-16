@@ -3,7 +3,7 @@ require 'spec_helper'
 describe(ArgumentsHelper) do
   let(:test_instance) { Class.new { include ImageHelper }.new }
   let(:gif) { fixture('gif/still.gif') }
-  let(:jpg) { fixture('jpg/tomb.jpg') }
+  let(:jpg) { fixture('jpg/game.jpg') }
   let(:png) { fixture('png/dices.png') }
   let(:txt) { fixture('misc/txt.txt') }
   let(:non_existing_gif) { fixture('gif/non-existing.gif') }

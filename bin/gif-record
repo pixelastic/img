@@ -69,6 +69,7 @@ class GifRecord
     gifify_options = [
       @tmp_video_file.shellescape,
       "-o #{@gif_file}",
+      '--colors 255',
       "--to=#{new_duration}"
     ]
     command = "gifify #{gifify_options.join(' ')}"

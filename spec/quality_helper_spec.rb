@@ -105,7 +105,7 @@ describe(QualityHelper) do
       expect(is_similar).to be true
     end
 
-    fit 'should not compress if already compressed' do
+    it 'should not compress if already compressed' do
       # Given
       original = jpg_compressed_20
       compressed = copy(original)

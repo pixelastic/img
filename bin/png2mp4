@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+require 'shellwords'
+
+# Convert a PNG file to an mp4 video
+class Png2Mp4
+  def initialize(*args)
+    @input = args[0]
+    @output = @input.gsub(/\.png/, '.mp4')
+    @duration = args[1] || 1
+  end
+
+  def run
+    options = [
+      "-framerate 1/#{@duration}",
+      "-i #{@input.shellescape}",
+      '-c:v libx264',
+      '-r 30',
+      '-pix_fmt yuv420p',
+      @output.shellescape
+    ]
+    command = "ffmpeg #{options.join(' ')}"
+    `#{command}`
+  end
+end
+Png2Mp4.new(*ARGV).run

@@ -4,6 +4,7 @@ describe(PngHelper) do
   let(:t) { Class.new { include ImageHelper }.new }
   let(:png) { fixture('png/dices.png') }
   let(:aasimar) { fixture('png/aasimar.png') }
+  let(:grayscale) { fixture('png/tomb-grayscale.png') }
 
   describe 'png?' do
     it 'returns true if file is a png' do
@@ -35,6 +36,4 @@ describe(PngHelper) do
       expect(before_height).to be > after_height
     end
   end
-
-
 end

@@ -38,5 +38,4 @@ module ImageHelper
     `convert #{input.shellescape} #{output.shellescape}`
     output
   end
-
 end

@@ -6,6 +6,7 @@ module QualityHelper
   def dssim_lower_bound
     0.0045
   end
+
   def dssim_upper_bound
     0.0047
   end
@@ -64,6 +65,7 @@ module QualityHelper
   end
 
   # Compress to the most aggressive quality, while still keeping a similar image
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def compress_best_dssim(input)
     # Stop if file already compressed
     if compressed?(input)
@@ -107,13 +109,10 @@ module QualityHelper
       # Change direction if going too far
       direction = :up if direction == :down && score > dssim_upper_bound
       direction = :down if direction == :up && score < dssim_lower_bound
-
     end
 
     FileUtils.mv(compressed_path, input, force: true)
     input
   end
-
-
-
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 end

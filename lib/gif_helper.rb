@@ -98,5 +98,4 @@ module GifHelper
     command = "mogrify #{options.join(' ')}"
     `#{command}`
   end
-
 end

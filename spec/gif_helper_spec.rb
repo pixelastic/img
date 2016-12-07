@@ -1,13 +1,15 @@
 require 'spec_helper'
 
 describe(GifHelper) do
-  let(:test_instance) { Class.new { include ImageHelper }.new }
+  let(:t) { Class.new { include ImageHelper }.new }
   let(:gif_still) { fixture('gif/still.gif') }
   let(:gif_capitalize) { fixture('gif/CAPITALIZE.GIF') }
   let(:gif_animated) { fixture('gif/animated.gif') }
   let(:gif_loop_once) { fixture('gif/loop-once.gif') }
   let(:gif_loop_five) { fixture('gif/loop-5.gif') }
   let(:jpg) { fixture('jpg/tomb.jpg') }
+  let(:dices) { fixture('gif/dices.gif') }
+  let(:grayscale) { fixture('gif/grayscale.gif') }
 
   describe 'gif?' do
     it 'returns true if file is a gif' do
@@ -15,7 +17,7 @@ describe(GifHelper) do
       input = gif_still
 
       # When
-      actual = test_instance.gif?(input)
+      actual = t.gif?(input)
 
       # Then
       expect(actual).to eq true
@@ -26,7 +28,7 @@ describe(GifHelper) do
       input = gif_capitalize
 
       # When
-      actual = test_instance.gif?(input)
+      actual = t.gif?(input)
 
       # Then
       expect(actual).to eq true
@@ -37,7 +39,7 @@ describe(GifHelper) do
       input = jpg
 
       # When
-      actual = test_instance.gif?(input)
+      actual = t.gif?(input)
 
       # Then
       expect(actual).to eq false
@@ -50,7 +52,7 @@ describe(GifHelper) do
       input = gif_animated
 
       # When
-      actual = test_instance.animated?(input)
+      actual = t.animated?(input)
 
       # Then
       expect(actual).to eq true
@@ -61,7 +63,7 @@ describe(GifHelper) do
       input = gif_loop_once
 
       # When
-      actual = test_instance.animated?(input)
+      actual = t.animated?(input)
 
       # Then
       expect(actual).to eq true
@@ -72,7 +74,7 @@ describe(GifHelper) do
       input = gif_still
 
       # When
-      actual = test_instance.animated?(input)
+      actual = t.animated?(input)
 
       # Then
       expect(actual).to eq false
@@ -83,7 +85,7 @@ describe(GifHelper) do
       input = jpg
 
       # When
-      actual = test_instance.animated?(input)
+      actual = t.animated?(input)
 
       # Then
       expect(actual).to eq false
@@ -96,7 +98,7 @@ describe(GifHelper) do
       input = gif_animated
 
       # When
-      actual = test_instance.looped?(input)
+      actual = t.looped?(input)
 
       # Then
       expect(actual).to eq true
@@ -107,7 +109,7 @@ describe(GifHelper) do
       input = gif_still
 
       # When
-      actual = test_instance.looped?(input)
+      actual = t.looped?(input)
 
       # Then
       expect(actual).to eq false
@@ -118,7 +120,7 @@ describe(GifHelper) do
       input = gif_loop_once
 
       # When
-      actual = test_instance.looped?(input)
+      actual = t.looped?(input)
 
       # Then
       expect(actual).to eq false
@@ -129,7 +131,7 @@ describe(GifHelper) do
       input = gif_loop_five
 
       # When
-      actual = test_instance.looped?(input)
+      actual = t.looped?(input)
 
       # Then
       expect(actual).to eq false
@@ -142,11 +144,11 @@ describe(GifHelper) do
       input = copy(gif_still)
 
       # When
-      test_instance.resize_gif(input, '100x50')
+      t.resize_gif(input, '100x50')
 
       # Then
-      width = test_instance.width(input)
-      height = test_instance.height(input)
+      width = t.width(input)
+      height = t.height(input)
       expect(width).to eq 100
       expect(height).to eq 50
     end
@@ -158,8 +160,8 @@ describe(GifHelper) do
       input = copy(gif_animated)
 
       # When
-      test_instance.unloop(input)
-      actual = test_instance.looped?(input)
+      t.unloop(input)
+      actual = t.looped?(input)
 
       # Then
       expect(actual).to eq true
@@ -172,8 +174,8 @@ describe(GifHelper) do
       input = copy(gif_loop_once)
 
       # When
-      test_instance.make_loop(input)
-      actual = test_instance.looped?(input)
+      t.make_loop(input)
+      actual = t.looped?(input)
 
       # Then
       expect(actual).to eq true
@@ -186,7 +188,7 @@ describe(GifHelper) do
       input = gif_animated
 
       # When
-      actual = test_instance.speed(input)
+      actual = t.speed(input)
 
       # Then
       expect(actual).to eq 10
@@ -197,7 +199,7 @@ describe(GifHelper) do
       input = gif_still
 
       # When
-      actual = test_instance.speed(input)
+      actual = t.speed(input)
 
       # Then
       expect(actual).to eq 0
@@ -211,8 +213,8 @@ describe(GifHelper) do
       speed = 15
 
       # When
-      test_instance.set_speed(input, speed)
-      actual = test_instance.speed(input)
+      t.set_speed(input, speed)
+      actual = t.speed(input)
 
       # Then
       expect(actual).to eq speed

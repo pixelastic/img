@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'shellwords'
+require 'awesome_print'
 
 # Convert a PNG file to an mp4 video
 class Png2Mp4
@@ -11,11 +12,17 @@ class Png2Mp4
 
   def run
     options = [
-      "-framerate 1/#{@duration}",
+      '-y',
+      '-f lavfi',
+      '-i anullsrc',
+      '-loop 1',
+      '-f image2',
       "-i #{@input.shellescape}",
-      '-c:v libx264',
       '-r 30',
+      "-t #{@duration}",
       '-pix_fmt yuv420p',
+      '-map 0:a',
+      '-map 1:v',
       @output.shellescape
     ]
     command = "ffmpeg #{options.join(' ')}"

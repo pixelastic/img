@@ -46,8 +46,7 @@ module QualityHelper
   # Are two files similar?
   def similar?(input, compressed)
     score = dssim(input, compressed)
-    ap score
-    score >= dssim_lower_bound && score <= dssim_upper_bound
+    score <= dssim_upper_bound
   end
 
   # Compress a file
@@ -60,6 +59,9 @@ module QualityHelper
     quality(input) <= 85
   end
 
+  # Try to get the current quality compression of the file
+  # This is highly dependent of the encoder, and the same value won't mean the
+  # same for different encoders
   def quality(input)
     `identify -format '%Q' #{input.shellescape}`.to_i
   end

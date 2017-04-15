@@ -10,6 +10,7 @@ module ColorHelper
     "##{hex}"
   end
 
+  # Return the hexadecimal code of the main color of the image
   def maincolor(image)
     options = [
       image.shellescape,
@@ -21,7 +22,20 @@ module ColorHelper
     raw = `#{command}`
 
     rgb2hex(raw)
+  end
 
+  # Tint a file to a given color
+  def tint(input, color)
+    color = "##{color}" unless color[0] == '#'
+    options = [
+      '-colorspace Gray',
+      "-fill '#{color}'",
+      '-tint 100',
+      input.shellescape
+    ]
+    command = "mogrify #{options.join(' ')}"
+    `#{command}`
+    input
   end
 
 

@@ -63,4 +63,28 @@ describe(ColorHelper) do
       expect(actual).to eq '#28739B'
     end
   end
+
+  describe 'tint' do
+    it 'should tint a file with the specified color' do
+      # Given
+      input = copy(jpg)
+
+      # When
+      actual = t.tint(input, '#00AEFF')
+
+      # Then
+      expect(t.similar?(actual, blue)).to eq true
+    end
+
+    it 'should accept hexadecimal without the hash' do
+      # Given
+      input = copy(jpg)
+
+      # When
+      actual = t.tint(input, '00AEFF')
+
+      # Then
+      expect(t.similar?(actual, blue)).to eq true
+    end
+  end
 end

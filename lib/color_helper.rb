@@ -38,5 +38,14 @@ module ColorHelper
     input
   end
 
-
+  # Darken an image
+  def darken(input)
+    options = [
+      '-brightness-contrast -10x0',
+      input.shellescape
+    ]
+    command = "mogrify #{options.join(' ')}"
+    `#{command}`
+    input
+  end
 end

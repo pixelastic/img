@@ -4,6 +4,7 @@ describe(ColorHelper) do
   let(:t) { Class.new { include ImageHelper }.new }
   let(:jpg) { fixture('jpg/game.jpg') }
   let(:blue) { fixture('jpg/game-blue.jpg') }
+  let(:dark) { fixture('jpg/game-dark.jpg') }
 
   describe 'rgb2hex' do
     it 'should convert an rgb value to an hex code' do
@@ -85,6 +86,19 @@ describe(ColorHelper) do
 
       # Then
       expect(t.similar?(actual, blue)).to eq true
+    end
+  end
+
+  describe 'darken' do
+    it 'should darken a file' do
+      # Given
+      input = copy(jpg)
+
+      # When
+      actual = t.darken(input)
+
+      # Then
+      expect(t.similar?(actual, dark)).to eq true
     end
   end
 end

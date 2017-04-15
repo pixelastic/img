@@ -9,4 +9,20 @@ module ColorHelper
 
     "##{hex}"
   end
+
+  def maincolor(image)
+    options = [
+      image.shellescape,
+      '-scale 1x1!',
+      "-format '%[pixel:u]'",
+      'info:-'
+    ]
+    command = "convert #{options.join(' ')}"
+    raw = `#{command}`
+
+    rgb2hex(raw)
+
+  end
+
+
 end

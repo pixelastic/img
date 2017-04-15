@@ -3,6 +3,7 @@ require 'spec_helper'
 describe(ColorHelper) do
   let(:t) { Class.new { include ImageHelper }.new }
   let(:jpg) { fixture('jpg/game.jpg') }
+  let(:blue) { fixture('jpg/game-blue.jpg') }
 
   describe 'rgb2hex' do
     it 'should convert an rgb value to an hex code' do
@@ -47,6 +48,19 @@ describe(ColorHelper) do
 
       # Then
       expect(actual).to eq '#00AEFF'
+    end
+  end
+
+  describe 'maincolor' do
+    it 'should return the main color of the image' do
+      # Given
+      input = blue
+
+      # When
+      actual = t.maincolor(input)
+
+      # Then
+      expect(actual).to eq '#28739B'
     end
   end
 end

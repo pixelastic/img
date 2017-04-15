@@ -3,6 +3,7 @@ require 'awesome_print'
 require 'filesize'
 require 'shellwords'
 require_relative './arguments_helper'
+require_relative './color_helper'
 require_relative './dimensions_helper'
 require_relative './effects_helper'
 require_relative './filesize_helper'
@@ -16,6 +17,7 @@ require_relative './screenshot_helper'
 # Allow access to current git repository state
 module ImageHelper
   include ArgumentsHelper
+  include ColorHelper
   include DimensionsHelper
   include EffectsHelper
   include FilesizeHelper

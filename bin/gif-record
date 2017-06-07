@@ -6,7 +6,7 @@ class GifRecord
   include ImageHelper
   def initialize
     @tmp_dir = File.expand_path(File.join('~', 'local', 'tmp', 'gif-record'))
-    @screenshot_dir = File.expand_path(File.join('~', 'perso', 'pictures', 'tmp', 'screenshots'))
+    @screenshot_dir = File.expand_path(File.join('~', 'Dropbox', 'backup', 'pictures', 'tmp', 'screenshots'))
     FileUtils.mkdir_p(@tmp_dir)
     @lock_file = File.join(@tmp_dir, 'lock')
     @tmp_video_file = File.join(@tmp_dir, 'raw.mkv')

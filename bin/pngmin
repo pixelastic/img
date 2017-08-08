@@ -5,53 +5,23 @@ require_relative '../lib/image_helper'
 class PNGmin
   include ImageHelper
   def initialize(*inputs)
-    @usage = 'jpgmin ./input.jpg [./input2.jpg]'
-    @documentation = 'Compress jpg files'
+    @usage = 'pngmin ./input.png [./input2.png]'
+    @documentation = 'Compress png files'
 
-    @inputs = validate_inputs(inputs, 'jpg')
-
-    @lower_bound = 0.014250
-    @upper_bound = 0.016500
-  end
-
-
-  # Compress with 80
-  # check the value
-  # If in range, quality is ok
-  #   can still improve, try with q--
-  #   direction down
-  # If not in range, too strong
-  #   is too strong, try with q++
-  #   direction up
-  #
-  # Try again, while in range, in the same direction
-  # if not in range, try again with a lower step (10 => 5 => 2 => 1), in the
-  # opposite direction until it's in range
-  # 
-  #
-  
-  def compress(file, quality)
-    options = [
-      file.shellescape,
-      "-quality #{quality}",
-      "#{quality}.jpg"
-    ]
-    command = "convert #{options.join(' ')}"
-    `#{command}`
+    @inputs = validate_inputs(inputs, 'png')
   end
 
   def run
-    input = @inputs[0]
-
-    compress(input, 80)
-
-
-
-    # @inputs.each do |input|
-    #   compress_jpg(input)
-    # end
+    @inputs.each do |input|
+      puts File.basename(input)
+      compress_best_dssim(input) do |quality|
+        if quality == false
+          puts 'Skipping, already too much compressed'
+          next
+        end
+        puts "Testing quality #{quality}"
+      end
+    end
   end
 end
 PNGmin.new(*ARGV).run
-
-

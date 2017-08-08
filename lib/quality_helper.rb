@@ -52,6 +52,7 @@ module QualityHelper
   # Compress a file
   def compress(input, quality = 80, output = nil)
     return compress_jpg(input, quality, output) if jpg?(input)
+    return compress_png(input, quality, output) if png?(input)
   end
 
   # Try to guess if a file is already compressed

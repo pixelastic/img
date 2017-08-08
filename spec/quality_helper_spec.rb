@@ -118,6 +118,24 @@ describe(QualityHelper) do
       filesize_compressed = test_instance.filesize(compressed)
       expect(filesize_compressed).to eq filesize_original
     end
+
+    it 'should find the best compression for a png file' do
+      # Given
+      original = png
+      compressed = copy(original)
+
+      # When
+      test_instance.compress_best_dssim(compressed)
+
+      # Then
+      filesize_original = test_instance.filesize(original)
+      filesize_compressed = test_instance.filesize(compressed)
+      expect(filesize_compressed < filesize_original).to be true
+
+      # Then
+      is_similar = test_instance.similar?(original, compressed)
+      expect(is_similar).to be true
+    end
   end
 
   describe 'compressed?' do

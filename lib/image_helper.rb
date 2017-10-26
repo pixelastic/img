@@ -4,6 +4,7 @@ require 'filesize'
 require 'shellwords'
 require_relative './arguments_helper'
 require_relative './color_helper'
+require_relative './command_line_helper'
 require_relative './dimensions_helper'
 require_relative './effects_helper'
 require_relative './filesize_helper'
@@ -18,6 +19,7 @@ require_relative './screenshot_helper'
 module ImageHelper
   include ArgumentsHelper
   include ColorHelper
+  include CommandLineHelper
   include DimensionsHelper
   include EffectsHelper
   include FilesizeHelper

@@ -14,6 +14,7 @@ require_relative './output_helper'
 require_relative './png_helper'
 require_relative './quality_helper'
 require_relative './screenshot_helper'
+require_relative './webp_helper'
 
 # Allow access to current git repository state
 module ImageHelper
@@ -29,6 +30,7 @@ module ImageHelper
   include PngHelper
   include QualityHelper
   include ScreenshotHelper
+  include WebpHelper
 
   def change_extension(input, extension)
     dirname = File.dirname(input)

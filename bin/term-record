@@ -25,6 +25,7 @@ asciinema rec "$json_file_tmp"
 gif_file_tmp="${tmp_dir}/gif/${now}.gif"
 asciicast2gif \
   -s 1 \
+  -S 2 \
   "$json_file_tmp" \
   "$gif_file_tmp"
 

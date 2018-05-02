@@ -16,7 +16,7 @@ require_relative './quality_helper'
 require_relative './screenshot_helper'
 require_relative './webp_helper'
 
-# Allow access to current git repository state
+# Various image editing utilities
 module ImageHelper
   include ArgumentsHelper
   include ColorHelper

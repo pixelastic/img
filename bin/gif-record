@@ -9,17 +9,25 @@ class GifRecord
   def initialize
     @tmp_dir = File.expand_path(File.join('~', 'local', 'tmp', 'gif-record'))
     @tmp_dir_frames = File.expand_path(File.join(@tmp_dir, 'frames'))
-    @tmp_gif_file = File.expand_path(File.join(@tmp_dir, 'frames', 'uncompressed.gif'))
-    @screenshot_dir = File.expand_path(File.join('~', 'Dropbox', 'backup', 'pictures', 'tmp', 'screenshots'))
+    @tmp_gif_file = File.expand_path(
+      File.join(@tmp_dir, 'frames', 'uncompressed.gif')
+    )
+    @screenshot_dir = File.expand_path(
+      File.join('~', 'Pictures', 'gif-records')
+    )
     FileUtils.mkdir_p(@tmp_dir)
+    FileUtils.mkdir_p(@screenshot_dir)
     @lock_file = File.join(@tmp_dir, 'lock')
     @tmp_video_file = File.join(@tmp_dir, 'raw.mkv')
-    @gif_file = File.join(@screenshot_dir, "#{DateTime.now.strftime('%F_%Hh%Mm%S')}.gif")
+    @gif_file = File.join(
+      @screenshot_dir,
+      "#{Time.now.strftime('%F_%Hh%Mm%S')}.gif"
+    )
   end
 
   def check_dependencies
     puts 'Checking dependencies...'
-    deps = %w(ffmpeg slop gifify exiftool eog nautilus gifsicle)
+    deps = %w[ffmpeg slop gifify exiftool eog nautilus gifsicle]
     deps.each do |dep|
       unless installed?(dep)
         puts "#{dep} is not installed, please install it before continuing"
@@ -53,20 +61,15 @@ class GifRecord
     File.exist?(@lock_file)
   end
 
-  # Get duration of the file, in seconds
-  def get_video_duration
-    command = "exiftool #{@tmp_video_file.shellescape} | grep 'Duration'"
-    raw = `#{command}`.strip
-    raw.split(':')[1].strip.split(' ')[0].to_i
-  end
-
   def stop_recording
     # Stop the current recording
     begin
       Process.kill('QUIT', get_pid)
       sleep 1
       notify 'Record stopped'
-    rescue
+    rescue(Error)
+      puts 'Error when recording!'
+      exit 1
     end
 
     # Remove the lock

@@ -27,7 +27,7 @@ class GifRecord
 
   def check_dependencies
     puts 'Checking dependencies...'
-    deps = %w[ffmpeg slop gifify exiftool eog nautilus gifsicle]
+    deps = %w[ffmpeg slop exiftool eog nautilus gifsicle]
     deps.each do |dep|
       unless installed?(dep)
         puts "#{dep} is not installed, please install it before continuing"
@@ -67,7 +67,7 @@ class GifRecord
       Process.kill('QUIT', get_pid)
       sleep 1
       notify 'Record stopped'
-    rescue(Error)
+    rescue(StandardError)
       puts 'Error when recording!'
       exit 1
     end

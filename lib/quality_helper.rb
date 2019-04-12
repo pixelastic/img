@@ -4,11 +4,11 @@ require 'shellwords'
 # Quality related methods
 module QualityHelper
   def dssim_lower_bound
-    0.0045
+    0.004
   end
 
   def dssim_upper_bound
-    0.0047
+    0.005
   end
 
   # Convert a file to a temporary png
@@ -40,7 +40,6 @@ module QualityHelper
     difference = `dssim #{original.shellescape} #{compressed.shellescape}`
 
     value = difference.strip.split("\t")[0].to_f
-    p value
     value
   end
 
@@ -69,6 +68,12 @@ module QualityHelper
   end
 
   # Compress to the most aggressive quality, while still keeping a similar image
+  # Note: This might yield inconsistent results as its based on an arbitrary
+  # range (defined by dssim_lower_bound and dssim_upper_bound) that we
+  # empirically defined as yielding "good enough" results. This might not work
+  # for all kind of images.
+  # A more thorough way would be to force a specific size threshold and pick the
+  # compression that gives the lowest dssim score for this size.
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
   def compress_best_dssim(input)
     # Stop if file already compressed

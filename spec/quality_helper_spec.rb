@@ -87,7 +87,7 @@ describe(QualityHelper) do
   end
 
   describe 'compress_best_dssim' do
-    it 'should find a dssim between boundaries' do
+    fit 'should find a dssim between boundaries' do
       # Given
       original = jpg
       compressed = copy(original)

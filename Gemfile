@@ -4,9 +4,10 @@ gem 'awesome_print', '~> 1.6'
 gem 'filesize'
 
 group :development do
-  gem 'flay', '~> 2.6'
-  gem 'flog', '~> 4.3'
-  gem 'guard-rspec', '~> 4.6'
-  gem 'rspec', '~> 3.0'
-  gem 'rubocop', '~> 0.51'
+  gem 'flay', '~> 2.12'
+  gem 'flog', '~> 4.6'
+  gem 'guard-rspec', '~> 4.7'
+  gem 'rspec', '~> 3.8'
+  gem 'rubocop', '~> 0.67'
+  gem 'rubocop-performance', '~> 1.1'
 end

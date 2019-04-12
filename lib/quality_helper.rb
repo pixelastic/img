@@ -40,6 +40,7 @@ module QualityHelper
     difference = `dssim #{original.shellescape} #{compressed.shellescape}`
 
     value = difference.strip.split("\t")[0].to_f
+    p value
     value
   end
 

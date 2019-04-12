@@ -1,5 +1,8 @@
 # Defaults:
 # https://github.com/bbatsov/rubocop/blob/master/config/default.yml
+
+require: rubocop-performance
+
 Metrics/AbcSize:
   Max: 100
 

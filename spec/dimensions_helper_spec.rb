@@ -161,5 +161,21 @@ describe(DimensionsHelper) do
       expect(output_width).to eq 1800
       expect(output_height).to eq 1013
     end
+
+    it 'should resize based on percentage if % is passed' do
+      # Given
+      input = copy(jpg)
+      width = test_instance.width(input)
+      height = test_instance.height(input)
+
+      # When
+      test_instance.resize(input, '50%')
+      output_width = test_instance.width(input)
+      output_height = test_instance.height(input)
+
+      # Then
+      expect(output_width).to eq width / 2
+      expect(output_height).to eq height / 2
+    end
   end
 end

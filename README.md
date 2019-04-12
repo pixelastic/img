@@ -8,10 +8,13 @@ This repository holds a bunch of command line scripts I use to manipulate images
 ## Dependencies
 
 - ImageMagick (`convert`, `mogrify`, `identify`)
-- Giflossy ([Gifsicle](https://github.com/pornel/giflossy/releases) fork)
-- Gifify
-- Ffmpeg
-- Exiftool
+- giflossy ([Gifsicle](https://github.com/pornel/giflossy/releases) fork)
+- gifify
+- jpegoptim
+- ffmpeg
+- exiftool
+- pngquant
+- dssim
 
 ## Available scripts
 
@@ -53,4 +56,6 @@ This repository holds a bunch of command line scripts I use to manipulate images
 #### dimensions
   Return the width x height of the specified files
 
+## Contributing
 
+Run `./scripts/test` to run the tests

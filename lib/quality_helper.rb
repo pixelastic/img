@@ -100,6 +100,9 @@ module QualityHelper
       # Stop if we start going into an endless loop
       break if quality == previous_quality
 
+      # Failsafe in case we try to compress above 100
+      break if quality > 100
+
       # yield to the outer block to display the current tested quality
       yield(quality) if block_given?
 

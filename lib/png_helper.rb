@@ -5,6 +5,16 @@ module PngHelper
     File.extname(input).casecmp('.png').zero?
   end
 
+  # Check if file is transparent
+  def transparent?(input)
+    options = [
+      "-format '%[channels]'",
+      input.shellescape
+    ]
+    raw = `identify #{options.join(' ')}`.chomp
+    raw['rgba']
+  end
+
   # Compress a PNG file
   def compress_png(input, quality = 80, output = nil)
     # Override file if no output selected

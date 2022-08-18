@@ -14,6 +14,7 @@ require_relative './output_helper'
 require_relative './png_helper'
 require_relative './quality_helper'
 require_relative './screenshot_helper'
+require_relative './tif_helper'
 require_relative './webp_helper'
 
 # Various image editing utilities
@@ -30,6 +31,7 @@ module ImageHelper
   include PngHelper
   include QualityHelper
   include ScreenshotHelper
+  include TifHelper
   include WebpHelper
 
   def change_extension(input, extension)

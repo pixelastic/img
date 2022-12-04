@@ -19,15 +19,21 @@ module QualityHelper
     tmp_dir = File.join(Dir.tmpdir, 'img', 'run')
     FileUtils.mkdir_p(tmp_dir)
 
-    # Copy the input to a temp location
     initial_ext = File.extname(input)
-    tmp_copy = Tempfile.new('temp_png')
-    tmp_copy_path = "#{tmp_copy.path}#{initial_ext}"
-    FileUtils.cp(input, tmp_copy_path)
 
-    # Convert that copy to a png and return the path
-    png_path = convert(tmp_copy_path, 'png')
-    tmp_copy.unlink
+    # Find a unique path to save the temp file
+    tmp_file = Tempfile.new()
+    tmp_basename = File.basename(tmp_file.path)
+    tmp_path = File.join(tmp_dir, "#{tmp_basename}#{initial_ext}")
+
+    # Copy the file there and convert it to png
+    FileUtils.cp(input, tmp_path)
+    png_path = convert(tmp_path, 'png')
+
+    # Delete the original jpg file
+    File.delete(tmp_path)
+
+    # Return the final png path
     png_path
   end
 
